@@ -1,0 +1,25 @@
+﻿@model DoAnCoSo.Models.ChiTietKhoHang
+
+@{
+    ViewData["Title"] = "Thêm Sản Phẩm Vào Kho";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center text-primary">Thêm Sản Phẩm Vào Kho</h2>
+    <form asp-action="AddProductToWarehouse" method="post">
+        <input type="hidden" asp-for="MaNhaKhoID" />
+        <div class="mb-3">
+            <label asp-for="MaSanPhamID" class="form-label">Sản Phẩm</label>
+            <select asp-for="MaSanPhamID" class="form-select" asp-items="ViewBag.SanPhams"></select>
+        </div>
+        <div class="mb-3">
+            <label asp-for="SoLuong" class="form-label">Số Lượng</label>
+            <input asp-for="SoLuong" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label asp-for="NgayNhap" class="form-label">Ngày Nhập</label>
+            <input asp-for="NgayNhap" class="form-control" type="date" />
+        </div>
+        <button type="submit" class="btn btn-success">Thêm</button>
+    </form>
+</div>

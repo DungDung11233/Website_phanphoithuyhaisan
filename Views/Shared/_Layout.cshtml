@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - DoAnCoSo</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/modern-style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/DoAnCoSo.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg modern-navbar sticky-top">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-droplet-fill me-2"></i>DoAnCoSo
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="SanPham" asp-action="Index">Products</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Categories
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" asp-controller="DanhMuc" asp-action="Index">All Categories</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="LoaiSanPham" asp-action="Index">Product Types</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Management
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                <li><a class="dropdown-item" asp-controller="SanPham" asp-action="Add">Add Product</a></li>
+                                <li><a class="dropdown-item" asp-controller="GiamGia" asp-action="Index">Discounts</a></li>
+                                <li><a class="dropdown-item" asp-controller="DonHang" asp-action="Index">Orders</a></li>
+                                <li><a class="dropdown-item" asp-controller="VanChuyen" asp-action="Index">Shipping Management</a></li>
+                                <li><a class="dropdown-item" asp-controller="NhaKho" asp-action="Index">Warehouse</a></li>
+                                <li><a class="dropdown-item" asp-controller="Mua" asp-action="Index">Seasons</a></li>
+                            </ul>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="ShoppingCart" asp-action="OrderHistory">Order History</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="PhieuNhapHang" asp-action="Create">Phiếu Nhập Hàng</a>
+                        </li>
+                        </li>
+                        <!-- Thêm nút Tạo Phiếu Nhập Hàng cho Nhà cung cấp -->
+                        @* @if (User.IsInRole("NhaCungCap")) *@
+                        @* { *@
+                        @*     <li class="nav-item"> *@
+                        @*         <a class="nav-link" asp-controller="PhieuNhapHang" asp-action="Create">Tạo Phiếu Nhập Hàng</a> *@
+                        @*     </li> *@
+                        @* } *@
+                        
+                    </ul>
+
+                    <div class="d-flex align-items-center">
+                        <partial name="_LoginPartial" />
+
+                        @using Newtonsoft.Json
+                        @inject IHttpContextAccessor HttpContextAccessor
+                        @{
+                            var cartJson = HttpContextAccessor.HttpContext.Session.GetString("Cart");
+                            var cart = string.IsNullOrEmpty(cartJson)
+                                ? new ShoppingCart { Items = new List<CartItem>() }
+                                : JsonConvert.DeserializeObject<ShoppingCart>(cartJson);
+                            int totalItems = cart.Items.Sum(item => item.SoLuong);
+                        }
+
+                        <a class="ms-3 cart-btn" asp-controller="ShoppingCart" asp-action="Index">
+                            <i class="bi bi-cart-fill me-1"></i> Cart
+                            @if (totalItems > 0)
+                            {
+                                <span class="badge rounded-pill bg-accent ms-1">
+                                    @totalItems
+                                </span>
+                            }
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Scroll Banner -->
+    <div class="container mt-3">
+        <div class="scroll-banner">
+            <div id="scrollText" class="scroll-text"></div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Modern Footer -->
+    <footer class="modern-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5 class="footer-heading">About Us</h5>
+                    <p class="text-white-50">We provide the freshest seafood directly from local fishermen to your table, ensuring quality and sustainability.</p>
+                </div>
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="footer-heading">Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li><a asp-controller="SanPham" asp-action="Index">Products</a></li>
+                        <li><a asp-controller="Home" asp-action="Privacy">Privacy Policy</a></li>
+                        <li><a asp-controller="ShoppingCart" asp-action="OrderHistory">Order History</a></li>
+                        <li><a asp-controller="VanChuyen" asp-action="Index">Shipping</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="footer-heading">Categories</h5>
+                    <ul class="footer-links">
+                        <li><a asp-controller="DanhMuc" asp-action="Index">All Categories</a></li>
+                        <li><a asp-controller="LoaiSanPham" asp-action="Index">Product Types</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h5 class="footer-heading">Contact</h5>
+                    <ul class="footer-links">
+                        <li><i class="bi bi-envelope me-2"></i><a href="mailto:contact@doancosoweb.com">Email Us</a></li>
+                        <li><i class="bi bi-telephone me-2"></i><a href="tel:+123456789">Call Us</a></li>
+                    </ul>
+                    <div class="mt-3">
+                        <a href="#" class="me-2 text-white"><i class="bi bi-facebook fs-5"></i></a>
+                        <a href="#" class="me-2 text-white"><i class="bi bi-instagram fs-5"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-twitter fs-5"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 - DoAnCoSo - All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- Script for scrolling banner -->
+    <script>
+        const messages = [
+            "🐟 Fresh Fish Sale! Up to 15% off on selected items 🐟",
+            "🦐 Big Shrimp Deal! Buy 1 Get 1 Free Today Only 🦐",
+            "🐠 Premium Tuna Available – Super Fresh! 🐠",
+            "🦑 Squid Madness: Limited Stock, Order Now! 🦑"
+        ];
+
+        let index = 0;
+        const scrollText = document.getElementById("scrollText");
+        const scrollBanner = document.querySelector(".scroll-banner");
+
+        function scrollMessage() {
+            const bannerWidth = scrollBanner.offsetWidth;
+            scrollText.style.left = bannerWidth + 'px';
+            scrollText.textContent = messages[index];
+
+            setTimeout(() => {
+                const textWidth = scrollText.offsetWidth;
+                let pos = bannerWidth;
+
+                const interval = setInterval(() => {
+                    if (pos < -textWidth) {
+                        clearInterval(interval);
+                        index = (index + 1) % messages.length;
+                        scrollMessage();
+                    } else {
+                        pos -= 2;
+                        scrollText.style.left = pos + 'px';
+                    }
+                }, 20);
+            }, 10);
+        }
+
+        // Start scrolling animation when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', scrollMessage);
+    </script>
+</body>
+</html>

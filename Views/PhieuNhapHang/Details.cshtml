@@ -1,0 +1,76 @@
+@model DoAnCoSo.Models.PhieuNhapHang
+
+@{
+    ViewData["Title"] = "Chi tiết phiếu nhập hàng";
+}
+
+<div class="container">
+    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Thông tin phiếu nhập</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Mã phiếu nhập:</dt>
+                        <dd class="col-sm-8">@Model.MaPhieuNhap</dd>
+
+                        <dt class="col-sm-4">Nhà cung cấp:</dt>
+                        <dd class="col-sm-8">@Model.NhaCungCap?.TenNCC</dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Tổng số lượng:</dt>
+                        <dd class="col-sm-8">@Model.TongSoLuong</dd>
+
+                        <dt class="col-sm-4">Tổng tiền:</dt>
+                        <dd class="col-sm-8">@Model.TongTien.ToString("N0") VNĐ</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h4>Chi tiết sản phẩm</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Mã SP</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Giá nhập</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ChiTietPhieuNhaps)
+                        {
+                            <tr>
+                                <td>@item.MaSanPham</td>
+                                <td>@item.SanPham?.TenSanPham</td>
+                                <td>@item.SoLuongSanPham</td>
+                                <td>@item.GiaNhapHang.ToString("N0") VNĐ</td>
+                                <td>@((item.SoLuongSanPham * item.GiaNhapHang).ToString("N0")) VNĐ</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại danh sách
+        </a>
+    </div>
+</div> 

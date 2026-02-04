@@ -1,0 +1,162 @@
+﻿@model IEnumerable<DoAnCoSo.Models.SanPham>
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<div class="container mb-5">
+    <!-- Page header -->
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h1 class="section-title mb-0">Products List</h1>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <a href="@Url.Action("Add", "SanPham")" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>Add New Product
+            </a>
+        </div>
+    </div>
+
+    <!-- Search and filter options -->
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" name="searchTerm" placeholder="Search products..." 
+                               value="@ViewBag.SearchTerm">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" name="filterStatus">
+                        <option value="">All Status</option>
+                        <option value="Available">Available</option>
+                        <option value="Low Stock">Low Stock</option>
+                        <option value="Out of Stock">Out of Stock</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="bi bi-sort-alpha-down"></i></span>
+                        <select class="form-select" name="sortOrder">
+                            <option value="name_asc">Name (A-Z)</option>
+                            <option value="name_desc">Name (Z-A)</option>
+                            <option value="price_asc">Price (Low-High)</option>
+                            <option value="price_desc">Price (High-Low)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Apply</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Products table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">ID</th>
+                            <th>Product Name</th>
+                            <th>Origin</th>
+                            <th>Price</th>
+                            <th>Harvest Date</th>
+                            <th>Storage Type</th>
+                            <th>Status</th>
+                            <th>Quantity</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">@item.MaSanPham</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/default-product.jpg" : item.ImageUrl)" 
+                                             class="rounded me-3" alt="@item.TenSanPham" style="width: 40px; height: 40px; object-fit: cover;">
+                                        <span class="fw-medium">@item.TenSanPham</span>
+                                    </div>
+                                </td>
+                                <td>@item.NguonGoc</td>
+                                <td>@item.GiaTheoKG.ToString("C0")</td>
+                                <td>@item.NgayThuHoach.ToString("dd/MM/yyyy")</td>
+                                <td>@item.LoaiBaoQuan</td>
+                                <td>
+                                    @{
+                                        string statusClass = "bg-success";
+                                        string statusText = item.TinhTrang ?? "Available";
+                                        
+                                        if (!string.IsNullOrEmpty(item.TinhTrang)) 
+                                        {
+                                            if (item.TinhTrang.Contains("Low")) 
+                                            {
+                                                statusClass = "bg-warning";
+                                            } 
+                                            else if (item.TinhTrang.Contains("Out")) 
+                                            {
+                                                statusClass = "bg-danger";
+                                            }
+                                        }
+                                    }
+                                    <span class="badge @statusClass">@statusText</span>
+                                </td>
+                                <td>@item.SoLuong</td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group">
+                                        <a href="@Url.Action("Display", "SanPham", new { id = item.MaSanPham })" 
+                                           class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="View">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="@Url.Action("Update", "SanPham", new { id = item.MaSanPham })" 
+                                           class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="@Url.Action("Delete", "SanPham", new { id = item.MaSanPham })" 
+                                           class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pagination if needed -->
+    @if(Model.Count() > 0)
+    {
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    </script>
+}
